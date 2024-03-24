@@ -238,33 +238,60 @@ class CustomArray {
         return this;
     }
     ;
-    // /**
-    //  * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
-    //  * @param start The zero-based location in the array from which to start removing elements.
-    //  * @param deleteCount The number of elements to remove.
-    //  * @returns An array containing the elements that were deleted.
-    //  */
-    splice(start, deleteCount) {
-        const result = new CustomArray();
-        const end = deleteCount ?? this.length - 1 - start;
-        for (let index = start; index < end; index++) {
-            result.push(this.data[index]);
+    // spilce
+    // 시작할 index, 삭제할 갯수, 삽입할 데이터를 입력받아서
+    // 삭제한 데이터를 응답받고 원본 배열을 변경하는 함수
+    splice(start, deleteCount, ...items) {
+        // 응답할 배열 생성
+        const removedItems = new CustomArray();
+        // start가 음수일 경우 처리
+        if (start < 0) {
+            start = Math.max(this.length + start, 0);
         }
-        return result;
+        else {
+            start = start;
+        }
+        // 최대 삭제 갯수
+        const maxDeletion = this.length - start;
+        // 삭제할 갯수 처리
+        if (deleteCount === undefined) {
+            deleteCount = maxDeletion;
+        }
+        else {
+            if (deleteCount > maxDeletion) {
+                deleteCount = maxDeletion;
+            }
+            else {
+                deleteCount = deleteCount;
+            }
+        }
+        // 배열 내부 데이터 삭제
+        for (let i = 0; i < deleteCount; i++) {
+            removedItems.push(this.data[start + i]);
+            delete this.data[start + i];
+        }
+        // 삭제후 index 정리
+        const shiftStart = start + deleteCount;
+        for (let i = shiftStart; i < this.length; i++) {
+            this.data[i - deleteCount] = this.data[i];
+            delete this.data[i];
+        }
+        // 삭제후 length 정리
+        this.length -= deleteCount;
+        // 추가해야할 데이터가 있을시 데이터 추가
+        if (items.length > 0) {
+            for (let i = this.length - 1; i >= start; i--) {
+                this.data[i + items.length] = this.data[i];
+            }
+            for (let i = 0; i < items.length; i++) {
+                this.data[start + i] = items[i];
+            }
+            this.length += items.length;
+        }
+        // 제거한 데이터 응답
+        return removedItems;
     }
     ;
-    // /**
-    //  * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
-    //  * @param start The zero-based location in the array from which to start removing elements.
-    //  * @param deleteCount The number of elements to remove.
-    //  * @param items Elements to insert into the array in place of the deleted elements.
-    //  * @returns An array containing the elements that were deleted.
-    //  */
-    // splice(start: number, deleteCount: number, ...items: T[]): T[];
-    // /**
-    //  * Inserts new elements at the start of an array, and returns the new length of the array.
-    //  * @param items Elements to insert at the start of the array.
-    //  */
     // indexOf
     // 배열에서 입력받은 값이 몇번째 index에 존재하는지 확인하는 함수
     indexOf(searchElement, fromIndex) {
@@ -321,28 +348,6 @@ class CustomArray {
     }
     ;
 }
-const arr = new CustomArray('a', 'bb', 'ccc');
-console.log("new Array('a', 'bb', 'ccc') : ", arr);
-arr.unshift(...[1, 3, 3]);
-console.log("unshift(...[1, 3, 3]) : ", arr);
-arr.shift();
-console.log("shift() : ", arr);
-arr.push(...['가', '나', '다']);
-console.log("push(...['가', '나', '다']) : ", arr);
-arr.pop();
-console.log("pop() : ", arr);
-const arr2 = [1, 2, 3];
-arr2.pop();
-let a3 = arr.toLocaleString('en', {});
-console.log(a3.join('!'));
-console.log(a3.reverse());
-console.log(a3.slice(1, 6));
-const a4 = new CustomArray(1, 3, 2, '가', '나', '다');
-const a5 = new CustomArray(1, 3, 2, '가', '나', '다');
-// console.log("### sort ", a4.sort((a, b) => a - b));
-// console.log("### sort ", a5.sort((a, b) => b - a));
-console.log("### indexOf ", a5.lastIndexOf(3));
-console.log("### every ", a5.every((v) => {
-    return typeof v === "number" || typeof v === "string";
-}));
-console.log("### splice ", [1, 2, 3, 4, 5, 6, 7, 8, 9].splice(1, 3));
+const a6 = new CustomArray(1, 2, 3, 4, 5, 6, 7, 8, 9);
+console.log("### splice ", a6.splice(1, 5, ['가', '나'], ['a', 'b']));
+console.log(a6);

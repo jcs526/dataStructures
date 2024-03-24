@@ -266,9 +266,66 @@ class CustomArray<T> {
     };
 
 
-
+    // spilce
+    // 시작할 index, 삭제할 갯수, 삽입할 데이터를 입력받아서
+    // 삭제한 데이터를 응답받고 원본 배열을 변경하는 함수
     splice(start: number, deleteCount?: number, ...items: T[]): CustomArray<T> {
+        // 응답할 배열 생성
+        const removedItems = new CustomArray<T>();
 
+        // start가 음수일 경우 처리
+        if (start < 0) {
+            start = Math.max(this.length + start, 0);
+        } else {
+            start = start;
+        }
+
+        // 최대 삭제 갯수
+        const maxDeletion = this.length - start;
+
+        // 삭제할 갯수 처리
+        if (deleteCount === undefined) {
+            deleteCount = maxDeletion;
+        } else {
+            if (deleteCount > maxDeletion) {
+                deleteCount = maxDeletion;
+            } else {
+                deleteCount = deleteCount;
+            }
+        }
+
+        // 배열 내부 데이터 삭제
+        for (let i = 0; i < deleteCount; i++) {
+            removedItems.push(this.data[start + i]);
+            delete this.data[start + i];
+        }
+
+        // 삭제후 index 정리
+        const shiftStart = start + deleteCount;
+        for (let i = shiftStart; i < this.length; i++) {
+            this.data[i - deleteCount] = this.data[i];
+            delete this.data[i];
+        }
+
+        // 삭제후 length 정리
+        this.length -= deleteCount;
+
+        // 추가해야할 데이터가 있을시 데이터 추가
+        if (items.length > 0) {
+            for (let i = this.length - 1; i >= start; i--) {
+                this.data[i + items.length] = this.data[i];
+            }
+
+            for (let i = 0; i < items.length; i++) {
+                this.data[start + i] = items[i];
+            }
+
+            this.length += items.length;
+        }
+
+
+        // 제거한 데이터 응답
+        return removedItems;
     };
 
 
@@ -338,7 +395,9 @@ class CustomArray<T> {
 }
 
 
+const a6 = new CustomArray(1, 2, 3, 4, 5, 6, 7, 8, 9);
+console.log("### splice ", a6.splice(1, 5, ['가', '나'], ['a', 'b']));
+console.log(a6);
 
-console.log("### splice ", [1, 2, 3, 4, 5, 6, 7, 8, 9].splice(1, 3));
 
 

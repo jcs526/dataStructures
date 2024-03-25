@@ -132,21 +132,33 @@ class CustomArray {
     // callback과 기본값을 입력받아 결과값에 할당한 뒤 배열을 순회하며
     // 이전 회차의 값과 현재 데이터를 callback을 통해 연산한 결과값을 결과에 할당하는 함수
     reduce(callback, initialValue) {
-        let accumulator = initialValue;
-        for (let i = 0; i < this.length; i++) {
-            if (accumulator !== undefined) {
-                accumulator = callback(accumulator, this.data[i], i, this);
-            }
-            else {
-                accumulator = this.data[i];
-            }
+        let accumulator;
+        let startIndex = 0;
+        // 초기값이 주어지지 않았을 경우
+        if (initialValue === undefined && this.length > 0) {
+            accumulator = this.data[0]; // T 타입을 U 타입으로 캐스팅
+            startIndex = 1; // 두 번째 요소부터 반복 시작
+        }
+        else {
+            accumulator = initialValue;
+            startIndex = 0;
+        }
+        // 배열을 순회하며 callback 함수 적용
+        for (let i = startIndex; i < this.length; i++) {
+            accumulator = callback(accumulator, this.data[i], i, this);
         }
         return accumulator;
     }
     // toString
     // 배열을 String으로 변환하는 함수
     toString() {
-        return String(this);
+        if (this.length === 0)
+            return '';
+        let result = '' + this.data[0];
+        for (let i = 1; i < this.length; i++) {
+            result += `,${this.data[i]}`;
+        }
+        return result;
     }
     // toLocaleString
     // 배열 데이터중 Date객체가 있으면 toLocaleString 함수를 적용후
@@ -201,11 +213,19 @@ class CustomArray {
         }
         return result;
     }
-    // reverse
-    // 배열의 순서를 뒤집은 결과를 return 해주는 함수
-    // Array.reverse는 배열에 영향을 줌
-    // 구현은 toReverse와 같은 기능으로 함
     reverse() {
+        let start = 0;
+        let end = this.length - 1;
+        while (start < end) {
+            [this.data[start], this.data[end]] = [this.data[end], this.data[start]];
+            start++;
+            end--;
+        }
+        return this;
+    }
+    // toReverse
+    // 배열의 순서를 뒤집은 결과를 return 해주는 함수
+    toReverse() {
         const result = new CustomArray();
         for (let i = this.length - 1; i >= 0; i--) {
             result.push(this.data[i]);
@@ -310,29 +330,25 @@ class CustomArray {
     ;
     // indexOf
     // 배열에서 입력받은 값이 몇번째 index에 존재하는지 확인하는 함수
-    indexOf(searchElement, fromIndex) {
-        const start = fromIndex ?? 0;
-        for (let index = start; index < this.length; index++) {
-            const element = this.data[index];
-            if (element === searchElement) {
-                return this.length - index;
+    indexOf(searchElement, fromIndex = 0) {
+        for (let i = fromIndex; i < this.length; i++) {
+            if (this.data[i] === searchElement) {
+                return i;
             }
         }
         return -1;
     }
-    // indexOf
+    // lastIndexOf
     // 배열에서 입력받은 값이 몇번째 index에 존재하는지 확인하는 함수
     lastIndexOf(searchElement, fromIndex) {
-        const from = fromIndex ?? this.length;
-        for (let index = from; index >= 0; index--) {
-            const element = this.data[index];
-            if (element === searchElement) {
-                return index;
+        let start = fromIndex !== undefined ? Math.min(fromIndex, this.length - 1) : this.length - 1;
+        for (let i = start; i >= 0; i--) {
+            if (this.data[i] === searchElement) {
+                return i;
             }
         }
         return -1;
     }
-    ;
     // some
     // 배열을 순회하며 입력받은 callback을 실행하여 모든 값이 truthy 를 return 받는지 확인하는 함수
     every(predicate, thisArg) {
@@ -412,4 +428,8 @@ class CustomArray {
         return result;
     }
 }
-console.log([1, 2, [3, 4, 5, [1, 23, 3]]].toString());
+let numbers = new CustomArray(1, 2, 3, 4, 5);
+// 초기 구현을 사용한 reduce 호출:
+// 여기서는 초기값을 제공하지 않으므로, accumulator는 undefined로 시작하고 즉시 오류가 발생할 수 있습니다.
+let sum = numbers.reduce((acc, value) => acc + value);
+console.log(sum);

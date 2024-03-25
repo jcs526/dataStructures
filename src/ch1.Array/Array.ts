@@ -148,22 +148,37 @@ class CustomArray<T> {
     // reduce 메소드
     // callback과 기본값을 입력받아 결과값에 할당한 뒤 배열을 순회하며
     // 이전 회차의 값과 현재 데이터를 callback을 통해 연산한 결과값을 결과에 할당하는 함수
-    reduce<U>(callback: (accumulator: U, currentValue: T, currentIndex: number, array: CustomArray<T>) => U, initialValue?: U): U {
-        let accumulator: U | undefined = initialValue;
-        for (let i = 0; i < this.length; i++) {
-            if (accumulator !== undefined) {
-                accumulator = callback(accumulator, this.data[i], i, this);
-            } else {
-                accumulator = this.data[i];
-            }
+    reduce<U = T>(callback: (accumulator: U, currentValue: T, currentIndex: number, array: CustomArray<T>) => U, initialValue?: U): U {
+        let accumulator: U;
+        let startIndex: number = 0;
+
+        // 초기값이 주어지지 않았을 경우
+        if (initialValue === undefined && this.length > 0) {
+            accumulator = this.data[0] as unknown as U; // T 타입을 U 타입으로 캐스팅
+            startIndex = 1; // 두 번째 요소부터 반복 시작
+        } else {
+            accumulator = initialValue!;
+            startIndex = 0;
         }
-        return accumulator as U;
+
+        // 배열을 순회하며 callback 함수 적용
+        for (let i = startIndex; i < this.length; i++) {
+            accumulator = callback(accumulator, this.data[i], i, this);
+        }
+
+        return accumulator;
     }
 
     // toString
     // 배열을 String으로 변환하는 함수
     toString(): string {
-        return String(this)
+        if (this.length === 0) return '';
+
+        let result = '' + this.data[0];
+        for (let i = 1; i < this.length; i++) {
+            result += `,${this.data[i]}`;
+        }
+        return result;
     }
 
     // toLocaleString
@@ -224,11 +239,22 @@ class CustomArray<T> {
         return result;
     }
 
-    // reverse
-    // 배열의 순서를 뒤집은 결과를 return 해주는 함수
-    // Array.reverse는 배열에 영향을 줌
-    // 구현은 toReverse와 같은 기능으로 함
     reverse(): CustomArray<T> {
+        let start = 0;
+        let end = this.length - 1;
+
+        while (start < end) {
+            [this.data[start], this.data[end]] = [this.data[end], this.data[start]];
+            start++;
+            end--;
+        }
+
+        return this;
+    }
+
+    // toReverse
+    // 배열의 순서를 뒤집은 결과를 return 해주는 함수
+    toReverse(): CustomArray<T> {
         const result = new CustomArray<T>();
 
         for (let i = this.length - 1; i >= 0; i--) {
@@ -348,30 +374,26 @@ class CustomArray<T> {
 
     // indexOf
     // 배열에서 입력받은 값이 몇번째 index에 존재하는지 확인하는 함수
-    indexOf(searchElement: T, fromIndex?: number): number {
-        const start: number = fromIndex ?? 0;
-
-        for (let index = start; index < this.length; index++) {
-            const element = this.data[index];
-            if (element === searchElement) {
-                return this.length - index;
+    indexOf(searchElement: T, fromIndex: number = 0): number {
+        for (let i = fromIndex; i < this.length; i++) {
+            if (this.data[i] === searchElement) {
+                return i;
             }
         }
         return -1;
     }
-    // indexOf
+    // lastIndexOf
     // 배열에서 입력받은 값이 몇번째 index에 존재하는지 확인하는 함수
     lastIndexOf(searchElement: T, fromIndex?: number): number {
-        const from: number = fromIndex ?? this.length;
+        let start = fromIndex !== undefined ? Math.min(fromIndex, this.length - 1) : this.length - 1;
 
-        for (let index = from; index >= 0; index--) {
-            const element = this.data[index];
-            if (element === searchElement) {
-                return index;
+        for (let i = start; i >= 0; i--) {
+            if (this.data[i] === searchElement) {
+                return i;
             }
         }
         return -1;
-    };
+    }
     // some
     // 배열을 순회하며 입력받은 callback을 실행하여 모든 값이 truthy 를 return 받는지 확인하는 함수
     every(predicate: (value: T, index?: number, array?: CustomArray<T>) => boolean, thisArg?: any): boolean {

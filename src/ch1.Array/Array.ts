@@ -42,6 +42,23 @@ class CustomArray<T> {
         });
     }
 
+    // iterator 구현
+    [Symbol.iterator]() {
+        let currentIndex = 0;
+        let data = this.data;
+
+        return {
+            next() {
+                // 모든 요소를 방문했으면 done을 true로 설정
+                if (currentIndex < Object.keys(data).length) {
+                    return { value: data[currentIndex++], done: false }
+                } else {
+                    return { done: true }
+                }
+            }
+        }
+    }
+
     // push 메소드
     // 입력받은 값을 배열의 마지막에 추가하는 함수
     push(...elements: T[]): number {
@@ -390,14 +407,59 @@ class CustomArray<T> {
         return false;
     };
 
+    // find
+    // 배열을 순회하며 callback을 실행하여 truthy를 만족하는 데이터를 return
+    find(predicate: (value: T, index: number, obj: CustomArray<T>) => unknown, thisArg?: any): T | undefined {
+        for (let i = 0; i < this.length; i++) {
+            const condition = predicate(this.data[i], i, this);
+            if (condition === true) {
+                return this.data[i];
+            }
+        }
+        return;
+    };
 
+    // findIndex
+    // 배열을 순회하며 callback을 실행하여 truthy를 만족하는 데이터의 index를 return
+    findIndex(predicate: (value: T, index: number, obj: CustomArray<T>) => unknown, thisArg?: any): number {
+        for (let i = 0; i < this.length; i++) {
+            const condition = predicate(this.data[i], i, this);
+            if (condition === true) {
+                return i;
+            }
+        }
+        return -1;
+    };
 
+    includes(searchElement: T, fromIndex?: number): boolean {
+        const from = fromIndex ?? 0;
+
+        for (let i = from; i < this.length; i++) {
+            if (this.data[i] === searchElement) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    flat(depth: number = 1): CustomArray<T> {
+        const result = new CustomArray<T>();
+
+        for (let index = 0; index < this.length; index++) {
+            if (this.data[index] instanceof CustomArray && depth > 0) {
+                result.push(...this.data[index].flat(depth - 1))
+            }
+            else if (this.data[index] instanceof Array && depth > 0) {
+                result.push(...this.data[index].flat(depth - 1))
+            } else {
+                result.push(this.data[index])
+            }
+        }
+
+        return result;
+    }
 }
 
-
-const a6 = new CustomArray(1, 2, 3, 4, 5, 6, 7, 8, 9);
-console.log("### splice ", a6.splice(1, 5, ['가', '나'], ['a', 'b']));
-console.log(a6);
 
 
 

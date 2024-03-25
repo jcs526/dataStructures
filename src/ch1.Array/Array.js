@@ -428,8 +428,3 @@ class CustomArray {
         return result;
     }
 }
-let numbers = new CustomArray(1, 2, 3, 4, 5);
-// 초기 구현을 사용한 reduce 호출:
-// 여기서는 초기값을 제공하지 않으므로, accumulator는 undefined로 시작하고 즉시 오류가 발생할 수 있습니다.
-let sum = numbers.reduce((acc, value) => acc + value);
-console.log(sum);

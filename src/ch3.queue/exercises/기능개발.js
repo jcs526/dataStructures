@@ -44,4 +44,3 @@ function solution(progresses, speeds) {
     }
     return answer;
 }
-}

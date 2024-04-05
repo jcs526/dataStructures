@@ -1,8 +1,8 @@
-class Stack<T>{
+class Stack<T extends unknown> {
     private data: T[] = [];
-    private top: number = -1;
+    private top = -1;
 
-    constructor(private capacity: number = Infinity) {
+    constructor(private capacity = Infinity) {
     }
 
     push(...items: T[]): void {
@@ -40,17 +40,4 @@ class Stack<T>{
     }
 }
 
-const st = new Stack();
-st.push(1, 2, 3);
-console.log(st);
-st.pop();
-console.log(st);
-st.peek();
-console.log(st);
-st.size();
-console.log(st);
-st.pop();
-st.pop();
-console.log(st);
-console.log(st.size(), st.isEmpty());
 

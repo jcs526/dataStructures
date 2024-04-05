@@ -36,16 +36,3 @@ class Stack {
         return this.top + 1;
     }
 }
-const st = new Stack();
-st.push(1, 2, 3);
-console.log(st);
-st.pop();
-console.log(st);
-st.peek();
-console.log(st);
-st.size();
-console.log(st);
-st.pop();
-st.pop();
-console.log(st);
-console.log(st.size(), st.isEmpty());

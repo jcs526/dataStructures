@@ -1,25 +1,19 @@
-class node<T> {
-  next: node<T> | null;
-  item: T
+class ListNode<T> {
+  next: ListNode<T> | null = null;
+  item: T;
 
   constructor(data: T) {
-    this.next = null;
     this.item = data;
   }
 }
 
 class LinkedList<T> {
-  head: node<T> | null;
+  private head: ListNode<T> | null = null;
 
-  constructor() {
-    this.head = null;
-  }
-
-  append(data: T) {
-    const item = new node<T>(data);
-
+  append(data: T): void {
+    const newNode = new ListNode<T>(data);
     if (this.head === null) {
-      this.head = item
+      this.head = newNode;
       return;
     }
 
@@ -27,39 +21,47 @@ class LinkedList<T> {
     while (tail.next !== null) {
       tail = tail.next;
     }
-    tail.next = item;
+    tail.next = newNode;
   }
 
-  prepend(data: T) {
-    const item = new node<T>(data);
-
-    if (this.head !== null) {
-      item.next = this.head;
-    }
-
-    this.head = item;
-
+  prepend(data: T): void {
+    const newNode = new ListNode<T>(data);
+    newNode.next = this.head;
+    this.head = newNode;
   }
 
-  // deleteWithValue(data) { }
-
-  find(data: T): null | node<T> {
+  deleteWithValue(data: T): ListNode<T> | null {
     if (this.head === null) {
       return null;
     }
 
-    let current = this.head;
-    while (true) {
+    if (this.head.item === data) {
+      const deletedNode = this.head;
+      this.head = this.head.next;
+      return deletedNode;
+    }
 
-      if (current.next === null) {
-        return null;
+    let current = this.head;
+    while (current.next !== null) {
+      if (current.next.item === data) {
+        const deletedNode = current.next;
+        current.next = current.next.next;
+        return deletedNode;
       }
+      current = current.next;
+    }
+    return null;
+  }
+
+  find(data: T): ListNode<T> | null {
+    let current = this.head;
+    while (current !== null) {
       if (current.item === data) {
         return current;
       }
-
       current = current.next;
     }
+    return null;
   }
 
   isEmpty(): boolean {
@@ -67,41 +69,46 @@ class LinkedList<T> {
   }
 
   printList(): string {
-    let str = '[';
-    if (this.head === null) {
-      return str;
-    }
-
+    let output = '[';
     let current = this.head;
-    while (true) {
-      str += current.item
-      if (current.next === null) {
-        break;
+    while (current !== null) {
+      output += current.item;
+      if (current.next !== null) {
+        output += ', ';
       }
-      str += ', '
       current = current.next;
     }
-    str += ']'
-    return str;
+    output += ']';
+    return output;
   }
 }
 
-const arr = new LinkedList();
+// 테스트
+console.log("Test Append Operation:");
+const list = new LinkedList<number>();
+list.append(1);
+list.append(2);
+list.append(3);
+console.log(list.printList());  // Expected: [1, 2, 3]
 
-arr.append(1);
-console.log(arr.printList());
+console.log("\nTest Prepend Operation:");
+list.prepend(0);
+console.log(list.printList());  // Expected: [0, 1, 2, 3]
 
-arr.append(2);
-console.log(arr.printList());
+console.log("\nTest deleteWithValue Operation:");
+console.log(list.deleteWithValue(2));  // Expected to return the node with value 2
+console.log(list.printList());  // Expected: [0, 1, 3]
+console.log(list.deleteWithValue(5));  // Expected to return null (not found)
+console.log(list.printList());  // Expected: [0, 1, 3]
 
-arr.append(3);
-console.log(arr.printList());
+console.log("\nTest find Operation:");
+console.log(list.find(1) ? "Found 1" : "1 Not Found");  // Expected: Found 1
+console.log(list.find(4) ? "Found 4" : "4 Not Found");  // Expected: 4 Not Found
 
-arr.append(4);
-console.log(arr.printList());
+console.log("\nTest isEmpty Operation:");
+console.log(list.isEmpty() ? "List is empty" : "List is not empty");  // Expected: List is not empty
+const emptyList = new LinkedList<number>();
+console.log(emptyList.isEmpty() ? "List is empty" : "List is not empty");  // Expected: List is empty
 
-arr.prepend(5);
-console.log(arr.printList());
-console.log(arr.find(3));
-
-
+console.log("\nTest printList Operation:");
+console.log(list.printList());  // Expected: [0, 1, 3]

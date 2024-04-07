@@ -112,3 +112,130 @@ console.log(emptyList.isEmpty() ? "List is empty" : "List is not empty");  // Ex
 
 console.log("\nTest printList Operation:");
 console.log(list.printList());  // Expected: [0, 1, 3]
+
+
+// 양방향 Linked List
+class DoublyLinkedListNode<T> {
+  prev: DoublyLinkedListNode<T> | null = null;
+  next: DoublyLinkedListNode<T> | null = null;
+  item: T;
+
+  constructor(data: T) {
+    this.item = data;
+  }
+}
+
+class DoublyLinkedList<T> {
+  private head: DoublyLinkedListNode<T> | null = null;
+  private tail: DoublyLinkedListNode<T> | null = null;
+
+  append(value: T): DoublyLinkedList<T> {
+    const newNode = new DoublyLinkedListNode(value);
+    if (!this.head || !this.tail) {
+      this.head = this.tail = newNode;
+    } else {
+      this.tail.next = newNode;
+      newNode.prev = this.tail;
+      this.tail = newNode;
+    }
+    return this;
+  }
+
+
+  prepend(value: T): DoublyLinkedList<T> {
+    const newNode = new DoublyLinkedListNode(value);
+    if (!this.head) {
+      this.head = this.tail = newNode;
+    } else {
+      newNode.next = this.head;
+      this.head.prev = newNode;
+      this.head = newNode;
+    }
+    return this;
+  }
+
+  delete(data: T): void {
+    if (!this.head) {
+      return;
+    }
+
+    let currentNode: DoublyLinkedListNode<T> | null = this.head;
+
+    while (currentNode) {
+      if (currentNode.item === data) {
+        if (currentNode.prev) {
+          currentNode.prev.next = currentNode.next;
+        } else {
+          this.head = currentNode.next;
+          if (this.head) {
+            this.head.prev = null;
+          }
+        }
+
+        if (currentNode.next) {
+          currentNode.next.prev = currentNode.prev;
+        } else {
+          this.tail = currentNode.prev;
+        }
+      }
+
+      currentNode = currentNode.next;
+    }
+  }
+
+  traverse(): T[] {
+    let currentNode = this.head;
+    const values: T[] = [];
+    while (currentNode) {
+      values.push(currentNode.item);
+      currentNode = currentNode.next;
+    }
+    return values;
+  }
+
+  find(data: T): DoublyLinkedListNode<T> | null {
+    let current = this.head;
+    while (current !== null) {
+      if (current.item === data) {
+        return current;
+      }
+      current = current.next;
+    }
+    return null;
+  }
+
+  isEmpty(): boolean {
+    return this.head === null;
+  }
+
+  printList(): string {
+    let output = '[';
+    let current = this.head;
+    while (current !== null) {
+      output += current.item;
+      if (current.next !== null) {
+        output += ', ';
+      }
+      current = current.next;
+    }
+    output += ']';
+    return output;
+  }
+}
+
+const a = new DoublyLinkedList();
+a.append(1);
+a.append(2);
+a.append(3);
+a.append(4);
+a.append(5);
+a.append(6);
+
+a.delete(4);
+a.prepend(-1);
+
+console.log(a.traverse());
+console.log(a.printList());
+console.log(a.isEmpty());
+console.log(a.find(3));
+

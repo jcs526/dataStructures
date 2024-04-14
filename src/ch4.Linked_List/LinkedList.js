@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListNode = void 0;
 class ListNode {
     next = null;
     item;
@@ -6,6 +8,7 @@ class ListNode {
         this.item = data;
     }
 }
+exports.ListNode = ListNode;
 class LinkedList {
     head = null;
     append(data) {

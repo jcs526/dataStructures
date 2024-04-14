@@ -1,4 +1,4 @@
-class ListNode<T> {
+export class ListNode<T> {
   next: ListNode<T> | null = null;
   item: T;
 

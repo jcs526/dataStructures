@@ -115,7 +115,7 @@ console.log(list.printList());  // Expected: [0, 1, 3]
 
 
 // 양방향 Linked List
-class DoublyLinkedListNode<T> {
+export class DoublyLinkedListNode<T> {
   prev: DoublyLinkedListNode<T> | null = null;
   next: DoublyLinkedListNode<T> | null = null;
   item: T;

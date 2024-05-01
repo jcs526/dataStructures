@@ -1,4 +1,3 @@
-
 class TreeNode<T> {
     left: TreeNode<T> | null = null;
     right: TreeNode<T> | null = null;
@@ -10,50 +9,92 @@ class TreeNode<T> {
 }
 
 class BinaryTree<T>{
-    root: TreeNode<T> | null = null
+    root: TreeNode<T> | null = null;
 
     append(item: T): void {
         const newNode = new TreeNode(item);
 
+        // 트리가 비어있으면, 새 노드를 루트로 설정
         if (this.root === null) {
             this.root = newNode;
             return;
         }
 
-        // level order랑 구조상 같은듯함?
-        const queue = [];
-        queue.push(this.root)
+        const queue: TreeNode<T>[] = [this.root];
 
         while (queue.length) {
-            const node: TreeNode<T> = queue.shift()!;
+            const node = queue.shift()!;
 
+            // 왼쪽 자식이 없다면 새 노드를 왼쪽 자식으로 추가
             if (node.left === null) {
                 node.left = newNode;
                 return;
             }
+            // 오른쪽 자식이 없다면 새 노드를 오른쪽 자식으로 추가
             if (node.right === null) {
                 node.right = newNode;
                 return;
             }
 
-            queue.push(node.left, node.right)
-
+            // 왼쪽과 오른쪽 자식이 모두 있다면, 그 자식들을 큐에 추가
+            queue.push(node.left, node.right);
+        }
+    }
+    pop(): T | null {
+        // 트리가 비어있는 경우, null을 반환
+        if (this.root === null) {
+            return null;
         }
 
+        // 루트 노드만 있는 경우, 루트 노드를 제거
+        if (this.root.left === null && this.root.right === null) {
+            const item = this.root.item;
+            this.root = null;
+            return item;
+        }
+
+        // 레벨 순서대로 노드를 찾아 마지막 노드를 제거
+        const queue: Array<TreeNode<T>> = [this.root];
+        let lastNode: TreeNode<T> | null = null;
+        let parentNode: TreeNode<T> | null = null;
+        let lastNodeParent: TreeNode<T> | null = null;
+
+        while (queue.length) {
+            parentNode = lastNode;
+            lastNode = queue.shift()!;
+
+            if (lastNode.left) {
+                queue.push(lastNode.left);
+                lastNodeParent = lastNode;  // 왼쪽 노드의 부모를 기록
+            }
+            if (lastNode.right) {
+                queue.push(lastNode.right);
+                lastNodeParent = lastNode;  // 오른쪽 노드의 부모를 기록
+            }
+        }
+
+        // 마지막 노드를 부모 노드에서 제거
+        const lastNodeItem = lastNode!.item;
+        if (lastNodeParent!.left === lastNode) {
+            lastNodeParent!.left = null;
+        } else if (lastNodeParent!.right === lastNode) {
+            lastNodeParent!.right = null;
+        }
+
+        return lastNodeItem;
     }
-    pop() { }
-    inOrder() {
+
+    inOrder(): T[] | null {
         // left => node => right 순서
         // Stack을 이용하여 탐색
         if (this.root === null) {
             return null;
         }
 
-        const stack = [];
-
+        const stack: TreeNode<T>[] = [];
         const result: T[] = [];
-
         let current: TreeNode<T> | null = this.root;
+
         while (current || stack.length) {
             while (current !== null) {
                 stack.push(current);
@@ -66,55 +107,49 @@ class BinaryTree<T>{
             // 오른쪽으로 이동
             current = current.right;
         }
+
         return result;
     }
-    preOrder() {
+
+    preOrder(): T[] | null {
         // node => left => right 순서
         // Stack을 이용하여 탐색
         if (this.root === null) {
             return null;
         }
 
-        const stack = [];
-        stack.push(this.root)
-
-        const result = [];
+        const stack: TreeNode<T>[] = [this.root];
+        const result: T[] = [];
 
         while (stack.length) {
-            const node: TreeNode<T> = stack.pop()!;
-            result.push(node.item)
-
-
+            const node = stack.pop()!;
+            result.push(node.item);
 
             if (node.right) {
-                stack.push(node.right)
+                stack.push(node.right);
             }
 
             if (node.left) {
-                stack.push(node.left)
+                stack.push(node.left);
             }
         }
 
-        return result
-
+        return result;
     }
 
-    postOrder() {
+    postOrder(): T[] | null {
         // left => right => node 순서
         // Stack 2개를 사용
         if (this.root === null) {
             return null;
         }
-        const result = [];
 
-        let stack1 = [];
-        let stack2 = [];
+        const result: T[] = [];
+        const stack1: TreeNode<T>[] = [this.root];
+        const stack2: TreeNode<T>[] = [];
 
-        stack1.push(this.root);
-        // []
-        // [1,3,2,5,4,7,6]
-        while (stack1.length > 0) {
-            let current: TreeNode<T> = stack1.pop()!;
+        while (stack1.length) {
+            const current = stack1.pop()!;
             // 선입후출
             // node 먼저 입력
             stack2.push(current);
@@ -129,38 +164,36 @@ class BinaryTree<T>{
             }
         }
 
-        while (stack2.length > 0) {
-            let current = stack2.pop();
-            result.push(current?.item)
+        while (stack2.length) {
+            const current = stack2.pop()!;
+            result.push(current.item);
         }
 
-        return result
+        return result;
     }
+
     levelOrder(): T[] | null {
-        // Queue를 이용하여 level별 탐색
         if (this.root === null) {
             return null;
         }
 
-        const queue = [];
-        queue.push(this.root)
-
-        const result = [];
+        const queue: TreeNode<T>[] = [this.root];
+        const result: T[] = [];
 
         while (queue.length) {
-            const node: TreeNode<T> = queue.shift()!;
-            result.push(node.item)
+            const node = queue.shift()!;
+            result.push(node.item);
 
             if (node.left) {
-                queue.push(node.left)
+                queue.push(node.left);
             }
 
             if (node.right) {
-                queue.push(node.right)
+                queue.push(node.right);
             }
         }
 
-        return result
+        return result;
     }
 }
 
@@ -187,16 +220,3 @@ console.log(tree.preOrder());
 console.log(tree.inOrder());
 console.log(tree.postOrder());
 
-
-console.log(`            1
-     2            3
-   4   5       6      7
- 8 9 10 11   12 13  14`);
-
-/**
- *           1
- *     2            3
- *   4   5       6      7
- * 8 9 10 11   12 13  14
- * 
- */

@@ -57,11 +57,9 @@ class BinaryTree<T> {
         // 레벨 순서대로 노드를 찾아 마지막 노드를 제거
         const queue: Array<TreeNode<T>> = [this.root];
         let lastNode: TreeNode<T> | null = null;
-        let parentNode: TreeNode<T> | null = null;
         let lastNodeParent: TreeNode<T> | null = null;
 
         while (queue.length) {
-            parentNode = lastNode;
             lastNode = queue.shift()!;
 
             if (lastNode.left) {
@@ -208,34 +206,44 @@ class BinaryTree<T> {
         }
 
         let result: T[] = [];
-        result.push(...this.inorderTraversal(root.left));  // Traverse left subtree
-        result.push(root.item);                                // Visit node
-        result.push(...this.inorderTraversal(root.right)); // Traverse right subtree
+        result.push(...this.inorderTraversal(root.left));
+        result.push(root.item);
+        result.push(...this.inorderTraversal(root.right));
         return result;
     }
     preOrderRescursive(): T[] {
-        const result: T[] = [];
-
-        return result;
+        if (this.root === null) {
+            return [];
+        }
+        return this.preOrderTraversal(this.root);
     }
-    preOrderSearch() {
-        // node => left => right 순서
+    preOrderTraversal(root: TreeNode<T> | null) {
+        if (root === null) {
+            return [];
+        }
+
+        let result: T[] = [];
+        result.push(root.item);
+        result.push(...this.preOrderTraversal(root.left));
+        result.push(...this.preOrderTraversal(root.right));
+        return result;
     }
     postOrderRescursive(): T[] {
-        const result: T[] = [];
+        if (this.root === null) {
+            return [];
+        }
+        return this.postOrderTraversal(this.root);
+    }
+    postOrderTraversal(root: TreeNode<T> | null) {
+        if (root === null) {
+            return [];
+        }
 
+        let result: T[] = [];
+        result.push(...this.postOrderTraversal(root.left));  // Traverse left subtree
+        result.push(...this.postOrderTraversal(root.right)); // Traverse right subtree
+        result.push(root.item);                                // Visit node
         return result;
-    }
-    postOrderSearch() {
-        // left => right => node 순서
-    }
-    levelOrderRescursive(): T[] {
-        const result: T[] = [];
-
-        return result;
-    }
-    levelOrderSearch() {
-
     }
 }
 
@@ -256,10 +264,14 @@ tree.append(12)
 tree.append(13)
 tree.append(14)
 
+
+
 console.log(tree);
 console.log("levelOrder", tree.levelOrder());
 console.log("preOrder", tree.preOrder());
+console.log("재귀 preOrder", tree.preOrderRescursive());
 console.log("inorder", tree.inOrder());
 console.log("재귀 inorder", tree.inOrderRescursive());
 console.log("postOrder", tree.postOrder());
+console.log("재귀 postOrder", tree.postOrderRescursive());
 

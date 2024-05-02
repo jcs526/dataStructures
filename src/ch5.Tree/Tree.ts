@@ -240,9 +240,9 @@ class BinaryTree<T> {
         }
 
         let result: T[] = [];
-        result.push(...this.postOrderTraversal(root.left));  // Traverse left subtree
-        result.push(...this.postOrderTraversal(root.right)); // Traverse right subtree
-        result.push(root.item);                                // Visit node
+        result.push(...this.postOrderTraversal(root.left));
+        result.push(...this.postOrderTraversal(root.right));
+        result.push(root.item);
         return result;
     }
 }

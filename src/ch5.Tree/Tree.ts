@@ -8,7 +8,7 @@ class TreeNode<T> {
     }
 }
 
-class BinaryTree<T>{
+class BinaryTree<T> {
     root: TreeNode<T> | null = null;
 
     append(item: T): void {
@@ -40,6 +40,7 @@ class BinaryTree<T>{
             queue.push(node.left, node.right);
         }
     }
+
     pop(): T | null {
         // 트리가 비어있는 경우, null을 반환
         if (this.root === null) {
@@ -195,6 +196,47 @@ class BinaryTree<T>{
 
         return result;
     }
+    inOrderRescursive(): T[] {
+        if (this.root === null) {
+            return [];
+        }
+        return this.inorderTraversal(this.root);
+    }
+    inorderTraversal(root: TreeNode<T> | null) {
+        if (root === null) {
+            return [];
+        }
+
+        let result: T[] = [];
+        result.push(...this.inorderTraversal(root.left));  // Traverse left subtree
+        result.push(root.item);                                // Visit node
+        result.push(...this.inorderTraversal(root.right)); // Traverse right subtree
+        return result;
+    }
+    preOrderRescursive(): T[] {
+        const result: T[] = [];
+
+        return result;
+    }
+    preOrderSearch() {
+        // node => left => right 순서
+    }
+    postOrderRescursive(): T[] {
+        const result: T[] = [];
+
+        return result;
+    }
+    postOrderSearch() {
+        // left => right => node 순서
+    }
+    levelOrderRescursive(): T[] {
+        const result: T[] = [];
+
+        return result;
+    }
+    levelOrderSearch() {
+
+    }
 }
 
 const tree = new BinaryTree<number>();
@@ -215,8 +257,9 @@ tree.append(13)
 tree.append(14)
 
 console.log(tree);
-console.log(tree.levelOrder());
-console.log(tree.preOrder());
-console.log(tree.inOrder());
-console.log(tree.postOrder());
+console.log("levelOrder", tree.levelOrder());
+console.log("preOrder", tree.preOrder());
+console.log("inorder", tree.inOrder());
+console.log("재귀 inorder", tree.inOrderRescursive());
+console.log("postOrder", tree.postOrder());
 

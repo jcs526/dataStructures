@@ -136,7 +136,7 @@ class BinaryTree<T> {
         return result;
     }
 
-    postOrder(): T[] | null {
+    postOrder() {
         // left => right => node 순서
         // Stack 2개를 사용
         if (this.root === null) {
@@ -144,7 +144,7 @@ class BinaryTree<T> {
         }
 
         const result: T[] = [];
-        const stack1: TreeNode<T>[] = [this.root];
+        const stack1 = [this.root];
         const stack2: TreeNode<T>[] = [];
 
         while (stack1.length) {

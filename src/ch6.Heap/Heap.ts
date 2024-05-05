@@ -65,6 +65,20 @@ class Heap<T> implements IHeap<T> {
     private bubbleUp(index: number): void {
         // 버블 업 메소드 스텁
         // 주어진 인덱스에서 요소를 위로 조정하여 힙 조건이 만족될 때까지 진행합니다.
+        const currentNode = this.heap[index];
+
+        while (index > 0) {
+            const parentIndex = Math.floor(index / 2);
+            const parentNode = this.heap[parentIndex];
+
+            if (currentNode >= parentNode) {
+                break;
+            }
+
+            this.heap[parentIndex] = currentNode;
+            this.heap[index] = parentNode;
+            index = parentIndex;
+        }
     }
 
     private bubbleDown(index: number): void {
@@ -72,3 +86,12 @@ class Heap<T> implements IHeap<T> {
         // 주어진 인덱스에서 요소를 아래로 조정하여 힙 조건이 만족될 때까지 진행합니다.
     }
 }
+
+const heap = new Heap();
+heap.insert(1);
+heap.insert(6);
+heap.insert(2);
+heap.insert(4);
+heap.insert(3);
+
+console.log(heap);

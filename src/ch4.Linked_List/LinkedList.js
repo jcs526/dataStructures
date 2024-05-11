@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ListNode = void 0;
+exports.DoublyLinkedListNode = exports.ListNode = void 0;
 class ListNode {
     next = null;
     item;
@@ -108,6 +108,7 @@ class DoublyLinkedListNode {
         this.item = data;
     }
 }
+exports.DoublyLinkedListNode = DoublyLinkedListNode;
 class DoublyLinkedList {
     head = null;
     tail = null;
